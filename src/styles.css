@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
 
-.print\:size-A4L {
+/* .print\:size-A4L {
     @media print {
         width: 297mm;
         height: 210mm;
     }
-}
+} */
