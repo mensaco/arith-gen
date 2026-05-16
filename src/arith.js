@@ -24,16 +24,23 @@ export default function GetArith() {
         },
 
         currentOperation: "",
-        setCurrentOperation(op){
+        setCurrentOperation(op) {
             this.currentOperation = op
         },
 
         get currentSign() {
             return this.operations[this.currentOperation]
         },
+
         get randomArgument() {
-            return Math.floor(Math.random() * (this.arguments_max - this.arguments_min) + this.arguments_min)
+            const amin = 1 * this.arguments_min
+            const amax = 1 * this.arguments_max
+
+            const r = Math.floor(Math.random() * (amax - amin) + amin + 0.5)
+            console.log(amax, amin, r)
+            return r
         },
+
         get lines() {
             const vl = []
             for (let i = 0; i < this.arguments_count; i++) {
@@ -41,6 +48,16 @@ export default function GetArith() {
                 let b = this.randomArgument
                 if (this.safeOperation && a < b) {
                     [a, b] = [b, a]
+                }
+                if (this.safeOperation && this.currentOperation == 'addition') {
+                    const c = Math.max(a, b)
+                    const s = a + b
+                    if (s > c) {
+                        if (a > b) {
+                            const d = s - c
+                            a = a - d
+                        }
+                    }
                 }
 
                 const line = {
