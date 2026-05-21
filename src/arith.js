@@ -50,13 +50,11 @@ export default function GetArith() {
                     [a, b] = [b, a]
                 }
                 if (this.safeOperation && this.currentOperation == 'addition') {
-                    const c = Math.max(a, b)
-                    const s = a + b
-                    if (s > c) {
-                        if (a > b) {
-                            const d = s - c
-                            a = a - d
-                        }
+                    let s = Number.MAX_SAFE_INTEGER
+                    while (s > this.arguments_max) {
+                        a = this.randomArgument
+                        b = this.randomArgument
+                        s = a + b
                     }
                 }
 
