@@ -10,7 +10,7 @@ export default defineConfig({
         rollupOptions: {
             input: {
                 main: resolve(__dirname, 'index.html'),
-                edit: resolve(__dirname, 'three.html'),
+                triangles: resolve(__dirname, 'triangles.html'),
             },
         },
     },

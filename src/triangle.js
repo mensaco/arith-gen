@@ -3,9 +3,9 @@
 export default function GetTriangle(Alpine) {
     return {
 
-        arguments_min: 0,
-        arguments_max: 20,
-        arguments_count: 12,
+        arguments_min: Alpine.$persist(0),
+        arguments_max: Alpine.$persist(20),
+        arguments_count: Alpine.$persist(12),
 
         tdata: Alpine.$persist([])
         ,
@@ -36,7 +36,7 @@ export default function GetTriangle(Alpine) {
             const amax = 1 * this.arguments_max
 
             const r = Math.floor(Math.random() * (amax - amin) + amin + 0.5)
-            console.log(amax, amin, r)
+            //console.log(amax, amin, r)
             return r
         },
 
@@ -55,7 +55,7 @@ export default function GetTriangle(Alpine) {
 
                 const m = Math.max(a, b, c)
 
-                const f = this.arguments_max / m
+                const f = Math.random() * this.arguments_max / m
 
                 const xx = Math.floor(x * f)
                 const yy = Math.floor(y * f)
@@ -90,7 +90,7 @@ export default function GetTriangle(Alpine) {
         ,
         init() {
             Alpine.effect(() => {
-                if (this.tdata == []) {
+                if (Array.isArray(this.tdata) && this.tdata.length == 0) {
                     this.refresh()
                 }
             })
