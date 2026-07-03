@@ -67,7 +67,7 @@ export default function GetTriangle(Alpine) {
         },
 
         get compareLabel() {
-            return this.compare ? 'do not compare' : 'compare'
+            return this.compare ? 'comparing' : 'not comparing'
         },
 
         get randomArgument() {
@@ -146,26 +146,6 @@ export default function GetTriangle(Alpine) {
             const d = []
 
             for (let i = 0; i < this.arguments_count; i++) {
-
-                // const a = this.randomArgument
-                // const b = this.randomArgument
-                // const x = Math.floor(Math.random() * Math.min(a, b))
-
-                // const y = a - x
-                // const z = b - x
-                // const c = y + z
-
-                // const m = Math.max(a, b, c)
-
-                // const f = Math.random() * this.arguments_max / m
-
-                // const xx = Math.floor(x * f)
-                // const yy = Math.floor(y * f)
-                // const zz = Math.floor(z * f)
-
-                // const aa = xx + yy
-                // const bb = xx + zz
-                // const cc = zz + yy
 
                 const o1 = this.randomArgument
                 const o2 = this.randomArgument
