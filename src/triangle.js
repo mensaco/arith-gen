@@ -170,6 +170,11 @@ export default function GetTriangle(Alpine) {
         ,
         init() {
             Alpine.effect(() => {
+                if(this.arguments_count > 100) {
+                    this.arguments_count = 100
+                }
+
+                
                 if (Array.isArray(this.tdata) && this.tdata.length == 0) {
                     this.refresh()
                 }

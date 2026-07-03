@@ -79,7 +79,7 @@ export default function GetArith(Alpine) {
             }
         },
 
-        currentOperation: Alpine.$persist('+').as(OP_KEY),
+        currentOperation: Alpine.$persist('addition').as(OP_KEY) || 'addition',
 
         calculate(a, b, op) {
             switch (op) {
@@ -89,11 +89,11 @@ export default function GetArith(Alpine) {
                 case this.operations.subtraction:
                     return a - b
                     break;
-                case this.operations.division:
-                    return a / b
-                    break;
                 case this.operations.multiplication:
                     return a * b
+                    break;
+                case this.operations.division:
+                    return (a / b).toFixed(2) // * 1.0
                     break;
 
                 default:
@@ -113,7 +113,7 @@ export default function GetArith(Alpine) {
         },
 
         get currentSign() {
-            return this.operations[this.currentOperation]
+            return this.operations[this.currentOperation] ?? 'addition'
         },
 
         get randomArgument() {
@@ -121,30 +121,53 @@ export default function GetArith(Alpine) {
             const amax = 1 * this.arguments_max
 
             const r = Math.floor(Math.random() * (amax - amin) + amin + 0.5)
-            console.log(amax, amin, r)
+
             return r
         },
 
         get lines() {
             const vl = []
+
             for (let i = 0; i < this.arguments_count; i++) {
                 let a = this.randomArgument
-                let b = this.randomArgument
-                if (this.safeOperation && a < b) {
-                    [a, b] = [b, a]
-                }
-                if (this.safeOperation && this.currentOperation == 'addition') {
-                    let s = Number.MAX_SAFE_INTEGER
-                    while (s > this.arguments_max) {
-                        a = this.randomArgument
+                let b = 0
+                switch (this.currentOperation) {
+                    case 'addition':
+                        b = Math.floor((this.arguments_max - a) * Math.random())
+                        break;
+
+                    case 'subtraction':
+                        b = Math.floor(this.arguments_max * Math.random())
+
+                        if (a < b & this.safeOperation) {
+                            [a, b] = [b, a]
+                        }
+                        break;
+
+                    case 'multiplication':
                         b = this.randomArgument
-                        s = a + b
-                    }
+                        break;
+
+                    case 'division':
+                        while (b == 0) { // b can't be 0
+                            b = this.randomArgument
+                        }
+                        if (a < b & this.safeOperation) {
+                            [a, b] = [b, a]
+                        }
+                        break;
+
+
+                    default:
+                        break;
                 }
+
+
+
 
                 const line = {
                     a: a,
-                    op: this.currentSign,
+                    sign: this.currentSign,
                     b: b,
                     result: this.calculate(a, b, this.currentSign)
                 }
@@ -152,22 +175,57 @@ export default function GetArith(Alpine) {
             }
             return vl
         },
-        save() {
 
-            // localStorage.setItem(OP_KEY, this.currentOperation)
-            // localStorage.setItem(COUNT_KEY, this.arguments_count)
-            // localStorage.setItem(MIN_KEY, this.arguments_min)
-            // localStorage.setItem(MAX_KEY, this.arguments_max)
-
+        restrainCount() {
+            if (this.arguments_count * 1 > 100) {
+                this.arguments_count = 100
+            }
         },
-        init() {
-            Alpine.effect(() => {
-                // this.setCurrentOperation(localStorage.getItem(OP_KEY) || 'addition')
-                // this.arguments_count = localStorage.getItem(COUNT_KEY) || 50
-                // this.arguments_min = localStorage.getItem(MIN_KEY) || 0
-                // this.arguments_max = localStorage.getItem(MAX_KEY) || 10
-            })
 
+        init() {
+
+
+            // Watch 'arguments_max' for any typed changes
+            this.$watch('arguments_max', (value) => {
+                // 1. Force the value to be a number (handles typing/strings)
+                let num = Number(value);
+
+                // 2. If user clears the input, default to 1 to prevent errors
+                if (isNaN(num) || num < Math.max(this.arguments_min, 0)) {
+                    this.arguments_max = Math.max(this.arguments_min, 0);
+                }
+                // 3. Hard cap the input at 100 to protect the browser
+                else if (num > 100) {
+                    this.arguments_max = 100;
+                }
+            });
+            // Watch 'arguments_min' for any typed changes
+            this.$watch('arguments_min', (value) => {
+                // 1. Force the value to be a number (handles typing/strings)
+                let num = Number(value);
+
+                // 2. If user clears the input, default to 1 to prevent errors
+                if (isNaN(num) || num < 1) {
+                    this.arguments_min = 1;
+                }
+                // 3. Hard cap the input at 100 to protect the browser
+                else if (num > this.arguments_max) {
+                    this.arguments_min = this.arguments_max;
+                }
+            });
+            this.$watch('arguments_count', (value) => {
+                // 1. Force the value to be a number (handles typing/strings)
+                let num = Number(value);
+
+                // 2. If user clears the input, default to 1 to prevent errors
+                if (isNaN(num) || num < 1) {
+                    this.arguments_count = 1;
+                }
+                // 3. Hard cap the input at 100 to protect the browser
+                else if (num > 100) {
+                    this.arguments_count = 100;
+                }
+            });
         }
 
     }
