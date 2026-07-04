@@ -151,7 +151,6 @@ export default function GetTriangle(Alpine) {
                 const o2 = this.randomArgument
                 const o3 = this.randomArgument
 
-
                 const n = this.calculateValues(o1, o2, o3)
 
                 d.push(n)

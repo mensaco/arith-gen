@@ -8,7 +8,7 @@
   <title>arith-gen</title>
 </head>
 
-<body x-data="arith" class="bg-gray-100 print:bg-white">
+<body x-data="arith" class="bg-gray-100 print:bg-white" @keyup.ctrl.alt.F5="localStorage.clear(); document.location.reload();">
 
   <div class="w-[210mm] mx-auto bg-white">
     <div class="print:hidden m-3">
@@ -23,7 +23,7 @@
           </label>
         </div>
         <div class="">
-          <input class="w-18 text-center appearance-none border border-gray-300 rounded p-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" id="inline-full-name" type="number" @change="restrainCount()" x-model="arguments_count" min="1" max="100">
+          <input class="w-18 text-center appearance-none border border-gray-300 rounded p-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" id="inline-full-name" type="number" @change="restrainCount();refresh()" x-model="arguments_count" min="1" max="100">
         </div>
       </div>
       <div class="md:flex md:items-center mb-6">
@@ -33,7 +33,7 @@
           </label>
         </div>
         <div class="md:w-2/3">
-          <input class="w-18 text-center appearance-none border border-gray-300 rounded p-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" id="inline-full-name" type="number" x-model="arguments_min" min="0" :max="arguments_max">
+          <input class="w-18 text-center appearance-none border border-gray-300 rounded p-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" id="inline-full-name" type="number" @change="refresh()" x-model="arguments_min" min="0" :max="arguments_max">
         </div>
       </div>
       <div class="md:flex md:items-center mb-6">
@@ -43,7 +43,7 @@
           </label>
         </div>
         <div class="md:w-2/3">
-          <input class="w-18 text-center appearance-none border border-gray-300 rounded p-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" id="inline-full-name" type="number" x-model="arguments_max" :min="arguments_min" max="100">
+          <input class="w-18 text-center appearance-none border border-gray-300 rounded p-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" id="inline-full-name" type="number" @change="refresh()" x-model="arguments_max" :min="arguments_min" max="100">
         </div>
       </div>
       <div class="md:flex md:items-center mb-6 gap-x-1">
@@ -53,7 +53,7 @@
           </label>
         </div>
         <div class="md:w-2/3">
-          <select class="appearance-none border border-gray-300 rounded w-full p-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" id="inline-full-name" x-model="currentOperation">
+          <select class="appearance-none border border-gray-300 rounded w-full p-1 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500" id="inline-full-name" @change="refresh()" x-model="currentOperation">
             <template x-for="op in ops">
               <option x-text="op" :value="op" :selected="op == currentOperation"></option>
             </template>
@@ -62,7 +62,7 @@
       </div>
       <div class="h-12" title="addition: sum never exceeds max; subtraction: no negative results">
         <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="inline-full-name">
-          Safe operation <input type="checkbox" x-model="safeOperation">
+          Safe operation <input type="checkbox" @change="refresh()" x-model="safeOperation">
         </label>
       </div>
 
@@ -71,12 +71,13 @@
 
     <div class="print:hidden m-3">
       <hr class="m-1">
+      <button class="bg-gray-200 text-gray-800 px-3 py-1 rounded" @click="refresh()">refresh</button>
       <button class="bg-gray-200 text-gray-800 px-3 py-1 rounded" @click="showNext()" x-text="showInputsLabel">show results</button>
       <template x-if="show == SHOW.INPUTS"><button class="bg-gray-200 text-gray-800 px-3 py-1 rounded" @click="compare^=true" x-text="compareLabel">compare</button></template>
       <button class="bg-gray-200 text-gray-800 px-3 py-1 rounded" @click="window.print()">print</button>
     </div>
 
-    <div class="grid grid-cols-4 m-7 gap-x-12 gap-y-2 mx-auto text-xl font-semibold">
+    <div class="grid grid-cols-4 m-7 gap-x-12 gap-y-2 mx-auto text-xl font-semibold" x-on:keydown.enter.prevent="$focus.next()">
 
       <template x-for="line in lines">
 

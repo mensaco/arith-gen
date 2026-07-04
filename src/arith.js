@@ -120,24 +120,28 @@ export default function GetArith(Alpine) {
             const amin = 1 * this.arguments_min
             const amax = 1 * this.arguments_max
 
-            const r = Math.floor(Math.random() * (amax - amin) + amin + 0.5)
+            const r = Math.floor(Math.random() * (amax - amin) + amin)
 
             return r
         },
 
-        get lines() {
+        lines : Alpine.$persist([]),
+
+        refresh() {
             const vl = []
+            const amin = 1 * this.arguments_min
+            const amax = 1 * this.arguments_max
 
             for (let i = 0; i < this.arguments_count; i++) {
                 let a = this.randomArgument
                 let b = 0
                 switch (this.currentOperation) {
                     case 'addition':
-                        b = Math.floor((this.arguments_max - a) * Math.random())
+                        b = Math.floor((amax - a) * Math.random() + amin)
                         break;
 
                     case 'subtraction':
-                        b = Math.floor(this.arguments_max * Math.random())
+                        b = Math.floor((amax - amin) * Math.random() + amin)
 
                         if (a < b & this.safeOperation) {
                             [a, b] = [b, a]
@@ -173,7 +177,7 @@ export default function GetArith(Alpine) {
                 }
                 vl.push(line)
             }
-            return vl
+            this.lines = vl
         },
 
         restrainCount() {
@@ -226,6 +230,10 @@ export default function GetArith(Alpine) {
                     this.arguments_count = 100;
                 }
             });
+
+            if(Array.isArray(this.lines) && this.lines.length == 0){
+                this.refresh()
+            }
         }
 
     }
